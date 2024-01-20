@@ -2,6 +2,8 @@ const db = require("../models");
 const Game = db.games;
 const Round = db.rounds;
 const User = db.users; // Assuming you have a User model
+const geolib = require('geolib');
+
 
 // Create a new game
 const createGame = async (req, res) => {
@@ -34,23 +36,13 @@ const createGame = async (req, res) => {
     }
 };
 
-// Get all games for a specific user by email
+// Get all games for a specific user
 const getAllGamesForUser = async (req, res) => {
     try {
-        const userEmail = req.params.userMail; // Assuming userMail is provided in the request parameters
-        const user = await User.findOne({
-            where: {
-                email: userEmail,
-            },
-        });
-
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-
+        const userId = req.params.userId; // Assuming userId is provided in the request parameters
         const games = await Game.findAll({
             where: {
-                userId: user.id,
+                userId: userId,
             },
         });
         return res.status(200).json(games);
@@ -67,12 +59,36 @@ const createRound = async (req, res) => {
         const data = { guessPoint, correctLocationPoint, style, gameId };
         const round = await Round.create(data);
 
+        // Find the worst round for the associated game
+        const worstRound = await Round.findOne({
+            where: { gameId },
+            order: [['score', 'ASC']], // Assuming lower score is worse
+        });
+
+        if (worstRound) {
+            // Update worst round information in the associated game
+            const worstRoundInfo = {
+                roundId: worstRound.id,
+                distance: worstRound.guessPoint
+                    ? geolib.getDistance(
+                        worstRound.guessPoint.coordinates,
+                        worstRound.correctLocationPoint.coordinates
+                    )
+                    : null, // Handle the case where guessPoint is not available
+                style: worstRound.style
+            };
+
+            const associatedGame = await Game.findByPk(gameId);
+            await associatedGame.update({ worstRoundInfo });
+        }
+
         return res.status(201).json(round);
     } catch (error) {
         console.error(error);
         return res.status(500).send("Internal Server Error");
     }
 };
+
 
 // Get all rounds for a specific game
 const getAllRoundsForGame = async (req, res) => {

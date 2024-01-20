@@ -42,8 +42,12 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
             },
+            worstRoundInfo: {
+                type: DataTypes.JSONB,
+            },
         },
         { sequelize, modelName: 'game', timestamps: true }
+
     );
     return Game;
 };
