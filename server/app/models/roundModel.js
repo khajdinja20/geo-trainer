@@ -49,11 +49,13 @@ module.exports = (sequelize, DataTypes) => {
                     // Calculate the distance between guessPoint and correctLocationPoint
                     const distance = geolib.getDistance(
                         round.guessPoint.coordinates,
-                        round.correctLocationPoint.coordinates
+                        round.correctLocationPoint.coordinates,
+                        1 //For precision, smaller number is more precise(1 = m, 0.01 = cm, etc)
                     );
 
                     // Calculate the score based on the distance
-                    round.score = Math.max(0, 5000 - distance);
+                    const sigma = 1000;
+                    round.score = Math.round(5000 * Math.exp(-0.5 * Math.pow(distance / sigma, 2)));
                 },
             },
         }

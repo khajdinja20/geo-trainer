@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 references: {
-                    model: 'users',  // Make sure to adjust this based on your actual User model name
+                    model: 'users',
                     key: 'id',
                 },
                 onUpdate: 'CASCADE',
@@ -45,6 +45,5 @@ module.exports = (sequelize, DataTypes) => {
         },
         { sequelize, modelName: 'game', timestamps: true }
     );
-
     return Game;
 };
