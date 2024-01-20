@@ -14,10 +14,10 @@ router.post('/signup', userAuth.saveUser, signup)
 router.post('/login', login)
 
 //game routes
-router.post('/games', createGame);
+router.post('/games/create', createGame);
 router.get('/games/:userMail', getAllGamesForUser);
-router.post('/rounds', createRound);
-router.get('/round/:gameId', getAllRoundsForGame);
+router.post('/rounds/create', createRound);
+router.get('/rounds/:gameId', getAllRoundsForGame);
 
 
 module.exports = router

@@ -1,14 +1,10 @@
 // models/roundModel.js
 'use strict';
 const { Model } = require('sequelize');
-const geolib = require('geolib'); // Make sure to install this library: npm install geolib
+const geolib = require('geolib');
 
 module.exports = (sequelize, DataTypes) => {
-    class Round extends Model {
-        static associate(models) {
-            Round.belongsTo(models.Game, { foreignKey: 'gameId' });
-        }
-    }
+    class Round extends Model { }
 
     Round.init(
         {
@@ -32,6 +28,16 @@ module.exports = (sequelize, DataTypes) => {
                         msg: 'Please provide a non-empty style for the round.'
                     }
                 }
+            },
+            gameId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'games',
+                    key: 'id',
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
             },
         },
         {

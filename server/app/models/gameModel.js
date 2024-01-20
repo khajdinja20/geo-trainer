@@ -3,12 +3,7 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class Game extends Model {
-        static associate(models) {
-            Game.belongsTo(models.User, { foreignKey: 'userId' });
-            Game.hasMany(models.Round, { foreignKey: 'gameId' });
-        }
-    }
+    class Game extends Model { }
 
     Game.init(
         {
@@ -36,6 +31,16 @@ module.exports = (sequelize, DataTypes) => {
             theme: {
                 type: DataTypes.STRING,
                 allowNull: true, // Theme is optional
+            },
+            userId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'users',  // Make sure to adjust this based on your actual User model name
+                    key: 'id',
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
             },
         },
         { sequelize, modelName: 'game', timestamps: true }
