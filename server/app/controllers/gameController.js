@@ -39,18 +39,30 @@ const createGame = async (req, res) => {
 // Get all games for a specific user
 const getAllGamesForUser = async (req, res) => {
     try {
-        const userId = req.params.userId; // Assuming userId is provided in the request parameters
-        const games = await Game.findAll({
+        const userMail = req.params.userMail;
+        const user = await User.findOne({
             where: {
-                userId: userId,
+                email: userMail,
             },
         });
+
+        if (!user) {
+            return res.status(404).send("User not found");
+        }
+
+        const games = await Game.findAll({
+            where: {
+                userId: user.id,
+            },
+        });
+
         return res.status(200).json(games);
     } catch (error) {
         console.error(error);
         return res.status(500).send("Internal Server Error");
     }
 };
+
 
 // Create a new round for a specific game
 const createRound = async (req, res) => {
