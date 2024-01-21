@@ -1,7 +1,7 @@
 const db = require("../models");
 const Game = db.games;
 const Round = db.rounds;
-const User = db.users; // Assuming you have a User model
+const User = db.users;
 const geolib = require('geolib');
 
 
@@ -74,7 +74,7 @@ const createRound = async (req, res) => {
         // Find the worst round for the associated game
         const worstRound = await Round.findOne({
             where: { gameId },
-            order: [['score', 'ASC']], // Assuming lower score is worse
+            order: [['score', 'ASC']],
         });
 
         if (worstRound) {
@@ -86,7 +86,7 @@ const createRound = async (req, res) => {
                         worstRound.guessPoint.coordinates,
                         worstRound.correctLocationPoint.coordinates
                     )
-                    : null, // Handle the case where guessPoint is not available
+                    : null,
                 style: worstRound.style
             };
 
